@@ -35,3 +35,15 @@ source = "../../modules/acm"
 sub_zone_id = module.route53.sub_zone_id
 ns_delegate_record_id = module.route53.ns_delegate_record_id
 }
+module "ecs" {
+source = "../../modules/ecs"
+security_group_ids = module.sgs.ecs_task_sg_id
+prod_target_group_arn = module.alb.tg_blue_arn
+subnet_ids = module.vpc.private_subnet_ids
+db_table_name = module.dynamodb.table_name
+execution_role_arn =
+task_role_arn = 
+}
+module "dynamodb" {
+source = "../../modules/dynamodb"
+}
