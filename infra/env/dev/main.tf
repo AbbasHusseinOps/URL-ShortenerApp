@@ -11,3 +11,8 @@ provider "aws" {
 module "vpc" {
 source = "../../modules/vpc"
 }
+
+module "sgs" {
+source = "../../modules/sgs"
+vpc_id = module.vpc.vpc_id
+}
