@@ -1,17 +1,23 @@
-### Example Dockerfile - i don't want to see copy and paste of this pls. Make your own and make sure it works. Make sure it's light, secure and instructions to run are there. 
+FROM python:3.11-slim AS build
+ENV PIP_NO_CACHE_DIR=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+WORKDIR /w
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/out -r requirements.txt
+COPY src/ /w/src
+RUN python - <<'PY'
+from pathlib import Path
+Path("/w/src/__init__.py").touch(exist_ok=True)
+PY
 
-# FROM python:3.12-slim AS build
-# WORKDIR /w
-# COPY requirements.txt .
-# RUN pip install --prefix=/out -r requirements.txt
-# COPY src/ ./src
+FROM gcr.io/distroless/python3-debian12
+WORKDIR /app
+ENV PYTHONPATH=/app:/usr/local/lib/python3.11/site-packages
+COPY --from=build /out/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=build /w/src /app/src
+USER 65532:65532
+EXPOSE 8080
+ENTRYPOINT ["/usr/bin/python3"]
+CMD ["-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
 
-# FROM gcr.io/distroless/python3-debian12
-# ENV PYTHONPATH=/app \
-#     TABLE_NAME=changeme
-# WORKDIR /app
-# COPY --from=build /out /usr/local
-# COPY --from=build /w/src /app
-# USER 65532:65532
-# EXPOSE 8080
-# CMD ["-m", "uvicorn", "main:app", "--host=0.0.0.0", "--port=8080"]
