@@ -76,3 +76,6 @@ module "waf" {
   source = "../../modules/waf"
   alb_arn = module.alb.alb_arn
 }
+module "ecr" {
+  source = "../../modules/ecr"
+}

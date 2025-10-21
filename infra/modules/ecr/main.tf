@@ -5,7 +5,7 @@ resource "aws_ecr_repository" "this" {
   
 }
 resource "aws_ecr_lifecycle_policy" "this" {
-  repository = var.repo_name
+  repository = aws_ecr_repository.this.name
 
   policy = jsonencode({
     rules = [
