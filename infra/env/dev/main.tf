@@ -41,9 +41,15 @@ security_group_ids = module.sgs.ecs_task_sg_id
 prod_target_group_arn = module.alb.tg_blue_arn
 subnet_ids = module.vpc.private_subnet_ids
 db_table_name = module.dynamodb.table_name
-execution_role_arn =
-task_role_arn = 
+execution_role_arn = module.iam.ecs_task_execution_role_arn
+task_role_arn = module.iam.ecs_task_role_arn
 }
 module "dynamodb" {
 source = "../../modules/dynamodb"
+}
+
+module "iam" {
+source = "../../modules/iam"
+codedeploy_dg = 
+task_ddb_table_arn = module.dynamodb.table_arn
 }
