@@ -37,7 +37,7 @@ ns_delegate_record_id = module.route53.ns_delegate_record_id
 }
 module "ecs" {
 source = "../../modules/ecs"
-security_group_ids = module.sgs.ecs_task_sg_id
+security_group_ids = [module.sgs.ecs_task_sg_id]
 prod_target_group_arn = module.alb.tg_blue_arn
 subnet_ids = module.vpc.private_subnet_ids
 db_table_name = module.dynamodb.table_name
@@ -50,6 +50,16 @@ source = "../../modules/dynamodb"
 
 module "iam" {
 source = "../../modules/iam"
-codedeploy_dg = 
+codedeploy_dg = module.codedeploy.deployment_group_id
 task_ddb_table_arn = module.dynamodb.table_arn
+}
+module "codedeploy" {
+source = "../../modules/codedeploy"
+codedeploy_iam = module.iam.codedeploy_role_arn
+ecs_cluster = module.ecs.cluster_name
+ecs_service = module.ecs.service_name
+targetblue = module.alb.tg_blue_arn
+targetgreen = module.alb.tg_green_arn
+blue_listener = module.alb.https_blue_listener_arn
+greentest_listener = module.alb.https_green_listener_arn
 }
