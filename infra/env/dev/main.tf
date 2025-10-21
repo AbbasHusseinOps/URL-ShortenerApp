@@ -63,3 +63,16 @@ targetgreen = module.alb.tg_green_arn
 blue_listener = module.alb.https_blue_listener_arn
 greentest_listener = module.alb.https_green_listener_arn
 }
+
+module "vpcend" {
+source = "../../modules/vpcend"
+vpc_id = module.vpc.vpc_id
+security_group_ids = [module.sgs.vpce_sg_id]
+private_route_table_ids = module.vpc.private_route_table_ids
+private_subnet_ids = module.vpc.private_subnet_ids
+}
+
+module "waf" {
+  source = "../../modules/waf"
+  alb_arn = module.alb.alb_arn
+}
