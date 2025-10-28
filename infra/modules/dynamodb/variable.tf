@@ -5,7 +5,7 @@ variable "table_name" {
 
 variable "pk_name" {
   type    = string
-  default = "pk"
+  default = "id"
 }
 
 variable "pk_type" {
