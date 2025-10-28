@@ -1,5 +1,5 @@
 variable "app_port"            {
-    type=string 
+    type=number
    default=8080
 }
 variable "health_check_path"   { 
