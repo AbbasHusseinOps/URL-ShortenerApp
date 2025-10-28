@@ -12,6 +12,7 @@ resource "aws_route53_record" "ns_delegate" {
   type    = "NS"
   ttl = var.ns_ttl
   records = aws_route53_zone.sub.name_servers
+  allow_overwrite = true
 }
 
 resource "aws_route53_record" "apex_alias" {
