@@ -38,6 +38,12 @@ jobs:
           terraform fmt -check
           terraform validate
 
+      - name: Terraform Linting
+        uses: terraform-linters/setup-tflint@v4
+      -  run:  |
+          tflint --init
+          tflint
+          
       - name: Checkov Scan
         id: checkov
         uses: bridgecrewio/checkov-action@v12
