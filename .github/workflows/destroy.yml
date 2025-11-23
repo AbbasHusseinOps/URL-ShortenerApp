@@ -1,0 +1,63 @@
+name: Terraform Destroy (dev)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: infra/env/dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.0"
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ROLE_ARN_TF }}
+          role-session-name: tf-destroy
+          aws-region: eu-west-2
+
+      - name: Terraform Init & Validate
+        run: |
+          terraform init -input=false
+          terraform fmt -check
+          terraform validate
+
+      - name: Terraform Linting
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Run TFLint
+        run: |
+          tflint --init
+          tflint
+
+      - name: Checkov Scan
+        id: checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: infra/env/dev
+          framework: terraform
+          soft_fail: true
+
+      - name: Terraform Plan Destroy
+        run: |
+          terraform plan -destroy -out=tfplan -input=false
+
+      - name: Terraform Destroy
+        run: |
+          terraform apply -auto-approve -input=false tfplan
