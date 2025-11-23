@@ -123,6 +123,7 @@ resource "aws_iam_role" "terraform" {
 
 resource "aws_iam_role_policy" "terraform_inline" {
   role = aws_iam_role.terraform.id
+
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -147,10 +148,20 @@ resource "aws_iam_role_policy" "terraform_inline" {
           "dynamodb:ListTables",
           "dynamodb:TagResource",
           "dynamodb:UntagResource",
+          "dynamodb:DescribeContinuousBackups",
+          "dynamodb:UpdateContinuousBackups",
           "iam:GetRole",
           "iam:GetPolicy",
           "iam:GetPolicyVersion",
-          "iam:List*"
+          "iam:List*",
+          "iam:CreateRole",
+          "iam:DeleteRole",
+          "iam:CreatePolicy",
+          "iam:DeletePolicy",
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy"
         ],
         Resource = "*"
       },
