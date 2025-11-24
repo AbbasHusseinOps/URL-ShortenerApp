@@ -1,4 +1,4 @@
-name: Terraform Destroy (dev)
+name: Terraform Destroy
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
         run: |
           tflint --init
           tflint
-
+          
       - name: Checkov Scan
         id: checkov
         uses: bridgecrewio/checkov-action@v12
@@ -61,3 +61,4 @@ jobs:
       - name: Terraform Destroy
         run: |
           terraform apply -auto-approve -input=false tfplan
+
