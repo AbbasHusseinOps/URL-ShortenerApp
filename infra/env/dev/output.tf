@@ -11,7 +11,7 @@ output "ecs_container_name" {
 }
 
 output "ecr_repository_name" {
-  value = module.ecr.repository_name
+  value = module.ecr.name
 }
 
 output "codedeploy_application_name" {

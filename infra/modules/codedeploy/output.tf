@@ -8,3 +8,6 @@ output "deployment_group_id" {
 output "codedeploy_app" {
   value = aws_codedeploy_app.deployer.id
 }
+output "application_name" {
+  value = aws_codedeploy_app.deployer.name
+}
