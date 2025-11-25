@@ -1,4 +1,4 @@
-name: Build and Deploy to ECS 
+name: Build and Deploy (blue-green)
 
 on:
   workflow_dispatch:
@@ -18,7 +18,10 @@ jobs:
       ECS_CLUSTER: url-shortener
       ECS_SERVICE: abbasurl-app
       CONTAINER_NAME: url-app
-      IMAGE_TAG: ${{ github.sha }}
+      CONTAINER_PORT: 8080
+      CODEDEPLOY_APP_NAME: url-shortener-codedeploy-app
+      CODEDEPLOY_DEPLOYMENT_GROUP: url-shortener-deployment
+      IMAGE_TAG: latest
 
     steps:
       - name: Checkout
@@ -46,18 +49,63 @@ jobs:
             app
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
-      - name: Render new task definition
-        id: render
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition-arn: ${{ env.ECS_SERVICE }}
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ env.IMAGE_URI }}
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Deploy new task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.render.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Prepare new task definition
+        run: |
+          TASK_DEF_ARN=$(aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --query 'services[0].taskDefinition' \
+            --output text)
+
+          aws ecs describe-task-definition \
+            --task-definition "$TASK_DEF_ARN" \
+            --query 'taskDefinition' \
+            > task-def.json
+
+          cat task-def.json \
+            | jq --arg IMAGE "$IMAGE_URI" --arg NAME "$CONTAINER_NAME" '
+                .containerDefinitions |=
+                  (map(if .name == $NAME then .image = $IMAGE else . end))
+                | del(.taskDefinitionArn)
+                | del(.revision)
+                | del(.status)
+                | del(.registeredAt)
+                | del(.registeredBy)
+              ' > new-task-def.json
+
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "NEW_TASK_DEF_ARN=$NEW_TASK_DEF_ARN" >> $GITHUB_ENV
+
+      - name: Create CodeDeploy deployment (blue/green)
+        run: |
+          cat > appspec.json <<EOF
+          {
+            "version": 1,
+            "Resources": [
+              {
+                "TargetService": {
+                  "Type": "AWS::ECS::Service",
+                  "Properties": {
+                    "TaskDefinition": "$NEW_TASK_DEF_ARN",
+                    "LoadBalancerInfo": {
+                      "ContainerName": "$CONTAINER_NAME",
+                      "ContainerPort": $CONTAINER_PORT
+                    }
+                  }
+                }
+              }
+            ]
+          }
+          EOF
+
+          aws deploy create-deployment \
+            --application-name "$CODEDEPLOY_APP_NAME" \
+            --deployment-group-name "$CODEDEPLOY_DEPLOYMENT_GROUP" \
+            --revision "revisionType=AppSpecContent,appSpecContent={content=$(cat appspec.json | jq -Rs .)}"
