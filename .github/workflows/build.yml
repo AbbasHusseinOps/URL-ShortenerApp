@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy to ECS 
 
 on:
   workflow_dispatch:
@@ -39,7 +39,11 @@ jobs:
       - name: Build & Push Docker Image
         run: |
           IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}
-          docker buildx build --platform linux/amd64 -t $IMAGE_URI --push app
+          docker buildx build \
+            --platform linux/amd64 \
+            -t "$IMAGE_URI" \
+            --push \
+            app
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
       - name: Render new task definition
