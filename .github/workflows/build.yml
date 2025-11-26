@@ -18,8 +18,8 @@ jobs:
       ECS_SERVICE: abbasurl-app
       CONTAINER_NAME: url-app
       CONTAINER_PORT: 8080
-      CODEDEPLOY_APP_NAME: url-shortener-codedeploy-app
-      CODEDEPLOY_DEPLOYMENT_GROUP: url-shortener-deployment
+      CODEDEPLOY_APP_NAME: url-shortener
+      CODEDEPLOY_DEPLOYMENT_GROUP: CANARY
       IMAGE_TAG: latest
 
     steps:
