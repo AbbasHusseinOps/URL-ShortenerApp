@@ -1,11 +1,16 @@
-URL Shortener App – Production-Ready Cloud Deployment on AWS
+URL Shortener – Production-Ready Cloud Deployment on AWS
+What does this project deliver?
 
-This project deploys a URL Shortener as a fully managed, production-grade web application on AWS. Instead of running locally, the app is hosted on scalable, secure cloud infrastructure that includes:
+A fully automated, scalable, and secure cloud deployment of a URL Shortener application using modern AWS infrastructure and CI/CD practices.
 
-Scalable hosting: Deployed on AWS ECS Fargate, which automatically manages containers and scales based on demand
-Zero-downtime releases: Blue/Green deployments via CodeDeploy with automated health checks and traffic shifting
-Secure access: HTTPS-ready architecture using ALB, private networking, and IAM least-privilege roles
-Automated CI/CD: GitHub Actions pipeline that builds the Docker image, pushes to ECR, and deploys to ECS using OIDC (no AWS keys needed)
-Production infrastructure: Load balancing, isolated VPC networking, role-based access, and logging built in
+This setup provides:
 
-The application runs reliably in the cloud, supports continuous deployments, and is built with Terraform for fully reproducible infrastructure.
+Scalable hosting – Hosted on AWS ECS Fargate with automatic container orchestration and scaling
+
+Zero-downtime deployments – Blue/Green releases via CodeDeploy with health checks and traffic shifting
+
+Secure architecture – HTTPS-ready load balancing, private networking, and IAM least-privilege roles
+
+Automated CI/CD – GitHub Actions pipeline that builds, pushes, and deploys using OIDC (no stored AWS keys)
+
+Production-grade infrastructure – Terraform-managed resources, ALB load balancing, logging, and networking best practices
