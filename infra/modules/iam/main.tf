@@ -54,25 +54,41 @@ resource "aws_iam_policy" "codedeploy" {
   policy = <<JSON
 {
   "Version": "2012-10-17",
-  "Statement": [{
-    "Sid": "AllBlueGreenControlPlane",
-    "Effect": "Allow",
-    "Action": [
-      "ecs:CreateTaskSet",
-      "ecs:UpdateServicePrimaryTaskSet",
-      "ecs:DeleteTaskSet",
-      "ecs:DescribeServices",
-      "ecs:DescribeTaskSets",
-      "ecs:DescribeTaskDefinition",
-      "elasticloadbalancing:ModifyListener",
-      "elasticloadbalancing:ModifyRule",
-      "elasticloadbalancing:DescribeListeners",
-      "elasticloadbalancing:DescribeTargetGroups",
-      "elasticloadbalancing:DescribeTargetHealth",
-      "elasticloadbalancing:DescribeRules"
-    ],
-    "Resource": "*"
-  }]
+  "Statement": [
+    {
+      "Sid": "AllBlueGreenControlPlane",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:CreateTaskSet",
+        "ecs:UpdateServicePrimaryTaskSet",
+        "ecs:DeleteTaskSet",
+        "ecs:DescribeServices",
+        "ecs:DescribeTaskSets",
+        "ecs:DescribeTaskDefinition",
+        "elasticloadbalancing:ModifyListener",
+        "elasticloadbalancing:ModifyRule",
+        "elasticloadbalancing:DescribeListeners",
+        "elasticloadbalancing:DescribeTargetGroups",
+        "elasticloadbalancing:DescribeTargetHealth",
+        "elasticloadbalancing:DescribeRules"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowPassEcsTaskRoles",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": [
+        "${aws_iam_role.ecs_task_execution.arn}",
+        "${aws_iam_role.ecs_task.arn}"
+      ],
+      "Condition": {
+        "StringLikeIfExists": {
+          "iam:PassedToService": "ecs-tasks.amazonaws.com"
+        }
+      }
+    }
+  ]
 }
 JSON
 }
