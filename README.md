@@ -39,6 +39,7 @@ AWS CodeDeploy manages blue/green deployments with controlled traffic shifting:
 
 ## Project Structure
 
+```text
 url-shortener/
 ├── .github/
 │   └── workflows/
@@ -71,9 +72,8 @@ url-shortener/
 │   │   └── waf/
 │   └── state/
 ├── OIDC/
-├── .gitignore
 └── README.md
-
+```
 ---
 
 ## Security
