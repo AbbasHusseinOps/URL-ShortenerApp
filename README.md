@@ -1,16 +1,80 @@
-URL Shortener – Production-Ready Cloud Deployment on AWS
-What does this project deliver?
+URL Shortener – Production-Ready Deployment on AWS ECS
+What This Project Does
 
-A fully automated, scalable, and secure cloud deployment of a URL Shortener application using modern AWS infrastructure and CI/CD practices.
+This project deploys a URL Shortener as a production-ready, cloud-hosted application on AWS ECS Fargate. Instead of running the app locally or manually managing servers, this setup provides:
 
-This setup provides:
+Scalable hosting: Runs on AWS ECS Fargate with automatic scaling
 
-Scalable hosting – Hosted on AWS ECS Fargate with automatic container orchestration and scaling
+High availability: Deployed across multiple Availability Zones
 
-Zero-downtime deployments – Blue/Green releases via CodeDeploy with health checks and traffic shifting
+Secure access: HTTPS termination through an Application Load Balancer (ALB)
 
-Secure architecture – HTTPS-ready load balancing, private networking, and IAM least-privilege roles
+Automated deployments: GitHub Actions pipeline with CodeDeploy Blue/Green
 
-Automated CI/CD – GitHub Actions pipeline that builds, pushes, and deploys using OIDC (no stored AWS keys)
+Zero-downtime deployments: Traffic shifting, health checks, and rollback
 
-Production-grade infrastructure – Terraform-managed resources, ALB load balancing, logging, and networking best practices
+Infrastructure as Code: Entire AWS environment built with Terraform using native state management
+
+Architecture Diagram
+
+This diagram represents the AWS infrastructure supporting the deployment.
+
+Deployment Status (GitHub Actions)
+
+A successful CI/CD pipeline run showing the automated build and deployment workflow:
+
+Blue/Green Deployment Status (CodeDeploy)
+
+AWS CodeDeploy manages blue/green deployments with controlled traffic shifting:
+
+Project Structure
+url-shortener/
+├── .github/
+│   └── workflows/
+│       ├── apply.yml
+│       ├── build.yml
+│       └── destroy.yml
+├── app/
+│   ├── src/
+│   ├── tests/
+│   ├── .dockerignore
+│   ├── Dockerfile
+│   └── requirements.txt
+├── images/
+├── infra/
+│   ├── env/
+│   ├── dev/
+│   ├── prod/
+│   ├── modules/
+│   │   ├── acm/
+│   │   ├── alb/
+│   │   ├── codedeploy/
+│   │   ├── dynamodb/
+│   │   ├── ecr/
+│   │   ├── ecs/
+│   │   ├── iam/
+│   │   ├── route53/
+│   │   ├── sgs/
+│   │   ├── vpc/
+│   │   ├── vpcend/
+│   │   └── waf/
+│   └── state/
+├── OIDC/
+├── .gitignore
+└── README.md
+
+Security
+
+This deployment follows modern AWS security best practices:
+
+Terraform uses native state management and locking
+
+ECS tasks run in private subnets
+
+Security groups follow least privilege
+
+HTTPS enforced using ACM certificates and ALB
+
+GitHub Actions uses OIDC to assume AWS roles (no stored credentials)
+
+No long-lived AWS access keys used anywhere
