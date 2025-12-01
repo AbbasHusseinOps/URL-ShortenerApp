@@ -41,35 +41,35 @@ AWS CodeDeploy manages blue/green deployments with controlled traffic shifting:
 
 url-shortener/
 ├── .github/
-│   └── workflows/
-│       ├── apply.yml
-│       ├── build.yml
-│       └── destroy.yml
+│ └── workflows/
+│ ├── apply.yml
+│ ├── build.yml
+│ └── destroy.yml
 ├── app/
-│   ├── src/
-│   ├── tests/
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   └── requirements.txt
+│ ├── src/
+│ ├── tests/
+│ ├── .dockerignore
+│ ├── Dockerfile
+│ └── requirements.txt
 ├── images/
 ├── infra/
-│   ├── env/
-│   ├── dev/
-│   ├── prod/
-│   ├── modules/
-│   │   ├── acm/
-│   │   ├── alb/
-│   │   ├── codedeploy/
-│   │   ├── dynamodb/
-│   │   ├── ecr/
-│   │   ├── ecs/
-│   │   ├── iam/
-│   │   ├── route53/
-│   │   ├── sgs/
-│   │   ├── vpc/
-│   │   ├── vpcend/
-│   │   └── waf/
-│   └── state/
+│ ├── env/
+│ ├── dev/
+│ ├── prod/
+│ ├── modules/
+│ │ ├── acm/
+│ │ ├── alb/
+│ │ ├── codedeploy/
+│ │ ├── dynamodb/
+│ │ ├── ecr/
+│ │ ├── ecs/
+│ │ ├── iam/
+│ │ ├── route53/
+│ │ ├── sgs/
+│ │ ├── vpc/
+│ │ ├── vpcend/
+│ │ └── waf/
+│ └── state/
 ├── OIDC/
 ├── .gitignore
 └── README.md
